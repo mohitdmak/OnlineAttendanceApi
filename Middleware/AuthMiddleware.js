@@ -18,7 +18,7 @@ const reqAuth = (req, res, next) => {
         });
     }
     else{
-        res.status(403).json({response: 'You must first login/singup to logout !'});
+        res.status(403).json({response: 'You are not authorized to access this page !'});
     }
 }
 

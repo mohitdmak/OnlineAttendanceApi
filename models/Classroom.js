@@ -11,7 +11,8 @@ const Classroomschema = new schema({
     },
     Teacher: {
         type: schema.Types.ObjectId,
-        ref: "teacher" 
+        ref: "teacher",
+        required: true 
     },
     Students: [{
         type: schema.Types.ObjectId,

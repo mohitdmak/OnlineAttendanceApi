@@ -22,6 +22,7 @@ const { checkLoggedTeacher } = require('./Middleware/loggedTeacher');
 //* This middleware will check for a logged in user and store user details as a variable in 'locals' of response.
 //* We are placing it above all middlewares by applying it to all get requests, thus any further middleware can check the status of user through the stored variable in locals.
 app.get('*', checkLoggedTeacher, checkLoggedStudent);
+app.post('*', checkLoggedTeacher, checkLoggedStudent);
 
 
 /*
@@ -40,6 +41,9 @@ app.use('/teacher', Teacherroutes);
 const Studentroutes = require('./routes/Studentroutes');
 app.use('/student', Studentroutes);
 
+//* Routing all Classroom paths
+const Classroomroutes = require('./routes/Classroomroutes');
+app.use('/classroom', Classroomroutes);
 
 //* Home page get request
 app.get('/', function(req, res){
