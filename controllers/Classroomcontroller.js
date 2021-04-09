@@ -1,6 +1,7 @@
 //Importing Teacher model and jwt string and bcrypt for password verification. 
 const express = require('express');
 const Classroom = require('../models/Classroom');
+const Student = require('../models/Student');
 const jwt = require('jsonwebtoken');
 
 //Importing dependancies for QRCODE.
@@ -104,7 +105,8 @@ const post_join = (req, res) => {
 };
 
 const post_attend = (req, res) => {
-
+    console.log(req);
+    res.end('hi');
 };
 
 const get_qr = (req, res) => {
@@ -119,8 +121,7 @@ const get_qr = (req, res) => {
             }
 
             console.log(code);
-            student.QR = code;
-            student.save()
+            Student.updateOne({_id: student.id}, {QR: code})
                 .then((result) => {
                     console.log('A qr code is generated and saved to the profile of the student');
                     res.status(200).json({response: 'Congrats! Your QR code has been generated !', QR: code, Student: result});
