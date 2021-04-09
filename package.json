@@ -1,0 +1,28 @@
+{
+  "name": "onlineattendance",
+  "version": "1.0.0",
+  "description": "Online College Conductance",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohitdmak/OnlineAttendance.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mohitdmak/OnlineAttendance/issues"
+  },
+  "homepage": "https://github.com/mohitdmak/OnlineAttendance#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.3",
+    "validator": "^13.5.2"
+  }
+}
