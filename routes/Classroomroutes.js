@@ -9,10 +9,10 @@ classroomrouter.post('/create', reqAuth, classroomcontrollers.post_create);
 
 classroomrouter.get('/all', classroomcontrollers.get_all);
 
-classroomrouter.post('/join/:id', classroomcontrollers.post_join);
+classroomrouter.post('/join/:id', reqAuth, classroomcontrollers.post_join);
 
-//classroomrouter.post('/', classroomcontrollers.post_login);
+classroomrouter.post('/attend/:id', reqAuth, classroomcontrollers.post_attend);
 
-//classroomrouter.get('/logout', reqAuth, classroomcontrollers.get_logout);
+classroomrouter.get('/generate/myQRcode', reqAuth, classroomcontrollers.get_qr);
 
 module.exports = classroomrouter;

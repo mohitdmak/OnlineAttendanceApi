@@ -3,20 +3,21 @@ const express = require('express');
 const Classroom = require('../models/Classroom');
 const jwt = require('jsonwebtoken');
 
+//Importing dependancies for QRCODE.
+const genQR = require('qrcode');
+const QRReader = require('qrcode-reader');
+const fs = require('fs');
+const jimp = require('jimp');
+
 //error handling to determine the exact error user made in filling form of auth.
 function handleError(err){
 
-    //* We are creating a JS object with the types of errors, so that we can output them together to the user.
-    let errors = {Subject: '', Teacher: '', Students:''};
-
-    if(err.message.includes('classroom validation failed')){
-        Object.values(err.errors).forEach(({properties}) => {
-            errors[properties.path] = properties.message;
-        });
-        console.error(errors);
+    //* We cannot fill an error message with [true,''] for the 'unique' field in the schema like we did for other fields, thus seperate handling is required for it using err.code .
+    if(err.code === 11000){
+        err = 'An account with this email id already exists.';
     }
 
-    return errors;
+    return err;
 }
 
 //* ALL CONTROLLER FUNCTIONS.
@@ -31,6 +32,7 @@ const get_all = (req, res) => {
         })
         .catch((err) => {
             console.log(err);
+            res.status(502).json({response: 'An error has occured while finding data of the classrooms.'});
         });
 };
 
@@ -67,24 +69,32 @@ const post_join = (req, res) => {
         const id = req.params.id;
         Classroom.findById(id)
             .then((result) => {
-                if(result.Students.includes(student.id)){
-                    console.log('Student is trying to join an already joined classroom.');
-                    res.status(400).json({response: 'You have already joined the classroom.'});
+                if(result){
+                    if(result.Students.includes(student.id)){
+                        console.log('Student is trying to join an already joined classroom.');
+                        res.status(400).json({response: 'You have already joined the classroom.'});
+                    }
+                    else{
+                        result.Students.push(student.id);
+                        result.save()
+                            .then((newresult) => {
+                                console.log('A student has joined a classroom!');
+                                res.status(200).json(newresult);
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                res.status(502).json({response: 'An error has occured while joining you to the classroom.'});
+                            });
+                    }
                 }
                 else{
-                    result.Students.push(student.id);
-                    result.save()
-                        .then((newresult) => {
-                            console.log('A student has joined a classroom!');
-                            res.status(200).json(newresult);
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                        });
+                    console.log('A student has tried to join a non-existent classroom.');
+                    res.status(400).json({response: 'The classroom you are trying to join does not exist !'});
                 }
             })
             .catch((err) => {
                 console.log(err);
+                res.status(502).json({response: 'An error has occured while finding the required classroom.'});
             });
     }
     else{
@@ -93,9 +103,45 @@ const post_join = (req, res) => {
     }
 };
 
+const post_attend = (req, res) => {
+
+};
+
+const get_qr = (req, res) => {
+    const student = res.locals.student;
+    if(student){
+        const data = student._id;
+        const stringdata = JSON.stringify(data);
+        genQR.toDataURL(stringdata, function(err, code){
+            if(err){
+                console.log(err);
+                res.status(200).json({response: 'An error has occured while creating your qr code.'});
+            }
+
+            console.log(code);
+            student.QR = code;
+            student.save()
+                .then((result) => {
+                    console.log('A qr code is generated and saved to the profile of the student');
+                    res.status(200).json({response: 'Congrats! Your QR code has been generated !', QR: code, Student: result});
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(400).json({response: 'An error has occured while saving your QR code to your profile.'});
+                });
+        });
+    }
+    else{
+        console.log('A teacher has tried to generate a qr code.');
+        res.status(400).json({response: 'Being a teacher, you cannot generate a qr code for yourself!'});
+    }
+};
+
 
 module.exports = {
     get_all,
     post_create,
-    post_join
+    post_join,
+    post_attend,
+    get_qr
 }

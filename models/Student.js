@@ -12,6 +12,9 @@ const Studentschema = new schema({
         type: String,
         required: true,
     },
+    QR: {
+        type: String
+    },
     email: {
         type: String,
         required: [true, 'User didnt enter an email address'],
