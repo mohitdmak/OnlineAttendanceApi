@@ -17,22 +17,12 @@ const createToken = (id) => {
 //error handling to determine the exact error user made in filling form of auth.
 function handleError(err){
 
-    //* We are creating a JS object with the types of errors, so that we can output them together to the user.
-    let errors = {email: '', password: '', Name:''};
-
-    if(err.message.includes('user validation failed')){
-        Object.values(err.errors).forEach(({properties}) => {
-            errors[properties.path] = properties.message;
-        });
-        console.error(errors);
-    }
-
     //* We cannot fill an error message with [true,''] for the 'unique' field in the schema like we did for other fields, thus seperate handling is required for it using err.code .
     if(err.code === 11000){
-        errors.email = 'An account with this email id already exists.';
+        err = 'An account with this email id already exists.';
     }
 
-    return errors;
+    return err;
 }
 
 //* ALL CONTROLLER FUNCTIONS.
@@ -50,11 +40,10 @@ const post_signup = (req, res) => {
             res.status(201).send(result);
         }).catch((err) => {
             var error = handleError(err);
-            var present = error.email + '\n' + error.password;
             console.log('User has made an error in signup form.')
             
             //api response
-            res.status(400).json(err);
+            res.status(400).json(error);
         });
 };
 
@@ -85,6 +74,7 @@ const post_login = (req, res) => {
                     })
                     .catch((err) => {
                         console.log(err);
+                        res.status(502).json({response: 'An error has occured while determining the validity of your password.'});
                     });
             }
             else{
@@ -94,6 +84,7 @@ const post_login = (req, res) => {
         })
         .catch((err) => {
             console.log(err);
+            res.status(502).json({response: 'An error occured while finding your data from the database.'});
         });
 };
 

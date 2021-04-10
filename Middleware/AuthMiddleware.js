@@ -9,6 +9,7 @@ const reqAuth = (req, res, next) => {
             if(err){
                 console.log('JWT token was not valid, redirecting . . .');
                 res.status(403).json({response: 'You are not authorized to access this page !'});
+                res.end();
             }
             else{
                 console.log('Allowing authenticated User . . .');
@@ -18,7 +19,8 @@ const reqAuth = (req, res, next) => {
         });
     }
     else{
-        res.status(403).json({response: 'You must first login/singup to logout !'});
+        res.status(403).json({response: 'You are not authorized to access this page !'});
+        res.end();
     }
 }
 
