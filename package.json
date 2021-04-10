@@ -22,11 +22,10 @@
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "jimp": "^0.5.6",
+    "image-downloader": "^4.0.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.3",
     "qrcode": "^1.4.4",
-    "qrcode-reader": "^1.0.4",
     "validator": "^13.5.2"
   }
 }

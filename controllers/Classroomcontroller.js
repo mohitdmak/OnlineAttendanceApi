@@ -6,9 +6,6 @@ const jwt = require('jsonwebtoken');
 
 //Importing dependancies for QRCODE.
 const genQR = require('qrcode');
-const QRReader = require('qrcode-reader');
-const fs = require('fs');
-const jimp = require('jimp');
 
 //error handling to determine the exact error user made in filling form of auth.
 function handleError(err){
@@ -105,8 +102,29 @@ const post_join = (req, res) => {
 };
 
 const post_attend = (req, res) => {
-    console.log(req);
-    res.end('hi');
+    id = req.body.qrdata;
+    classid = req.params.id;
+    Classroom.findById(classid)
+        .then((result) => {
+            if(result){
+                if(result.Students.includes(id)){
+                    console.log('Student is attending a class.');
+                    res.status(200).json({response: 'You can now attend your class !!!'});
+                }
+                else{
+                    console.log('Student is not allowed to attend the class.');
+                    res.status(400).json({response: 'You must first join this class to attend !!!'});
+                }
+            }
+            else{
+                console.log('Student has tried to attend a non-existant classroom.');
+                res.status(400).json({response: 'The class you are trying to attend does not exist.'});
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(502).json({response: 'An error has occured while attending the class.'});
+        });
 };
 
 const get_qr = (req, res) => {
@@ -114,7 +132,7 @@ const get_qr = (req, res) => {
     if(student){
         const data = student._id;
         const stringdata = JSON.stringify(data);
-        genQR.toDataURL(stringdata, function(err, code){
+        genQR.toString(stringdata, function(err, code){
             if(err){
                 console.log(err);
                 res.status(200).json({response: 'An error has occured while creating your qr code.'});
