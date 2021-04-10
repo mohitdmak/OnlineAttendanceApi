@@ -1,9 +1,8 @@
-//Importing controllers and necessary auth verification middleware
+// Importing controllers and necessary auth verification middleware
 const express = require('express');
 const classroomcontrollers = require('../controllers/Classroomcontroller');
 const classroomrouter = express.Router();
-const { reqAuth } = require('../Middleware/AuthMiddleware');
-
+const {reqAuth} = require('../Middleware/AuthMiddleware');
 
 classroomrouter.post('/create', reqAuth, classroomcontrollers.post_create);
 
