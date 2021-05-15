@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 
 const swaggerUI = require('swagger-ui-express');
-const swaggerFile = require('./swagger.json');
+const swaggerFile = require('./docs/swagger.json');
 app.use('/api', swaggerUI.serve, swaggerUI.setup(swaggerFile));
 
 
